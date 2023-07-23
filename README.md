@@ -1,18 +1,16 @@
-# Everything for PowerToys Run
-[![GitHub repo size](https://img.shields.io/github/repo-size/lin-ycv/everythingpowertoys)](#)
-[![GitHub release (release name instead of tag name)](https://img.shields.io/github/v/release/lin-ycv/everythingpowertoys?include_prereleases)](https://github.com/lin-ycv/EverythingPowerToys/releases/latest)
-[![Chocolatey Version](https://img.shields.io/chocolatey/v/everythingpowertoys)](https://community.chocolatey.org/packages/everythingpowertoys)
-[![GitHub all releases](https://img.shields.io/github/downloads/lin-ycv/EverythingPowerToys/total)](https://github.com/lin-ycv/EverythingPowerToys/releases/)
-[![GitHub release (latest by date)](https://img.shields.io/github/downloads/lin-ycv/everythingpowertoys/latest/total)](https://github.com/lin-ycv/EverythingPowerToys/releases/latest)
+# Current Directory Search
 
+## Usage
+Automatically locates the top-level Windows Explorer for the current directory, retrieves the folder path, and replaces the "." with the path. For example:
 
-This repo is to be used with the [PowerToys repo](https://github.com/microsoft/PowerToys), this will not compile when used standalone, as it's missing references from PowerToys. Instructions are in the wiki.
+    . SomePicture.jpg => "C:\Some\Path\" SomePicture.jpg
 
-The [release](https://github.com/lin-ycv/EverythingPowerToys/releases) is the compiled result of this repo, extract the downloaded folder to `C:\Program Files\PowerToys\modules\launcher\Plugins`
+Using "." followed by a file or folder name will add "parent:" to the search query, indicating not to search within subdirectories. After selecting and confirming the search result, it will automatically navigate to the corresponding file or folder. For example:
 
-[Everything](https://www.voidtools.com/downloads/) has to be downloaded seperately, and be running in order for this plugin to work.<br>
-**\*This does not work with the lite version of Everything, it does not support IPC**<br>
-*if you are on 1.5 alpha, you need to [Disable 1.5a Instance](http://www.voidtools.com/forum/viewtopic.php?f=12&t=9799#instance)*
+    .\ SomePicture.jpg => parent:"C:\Some\Path\" SomePicture.jpg
 
+## Compile
+The main modification is done in "Everything.cs." To compile, follow these steps:
 
-[![Stargazers over time](https://starchart.cc/lin-ycv/EverythingPowerToys.svg)](https://starchart.cc/lin-ycv/EverythingPowerToys)
+1. Clone the PowerToys repository.
+2. Add this project to the plugins folder.
