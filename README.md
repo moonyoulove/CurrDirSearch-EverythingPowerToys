@@ -9,6 +9,8 @@ Using "." followed by a file or folder name will add "parent:" to the search que
 
     ./ SomePicture.jpg => parent:"C:\Some\Path\" SomePicture.jpg
 
+Preferably, change the keyword "." of the Program plugin in PowerToys Run to something else.
+
 ## Compile
 The main modification is done in "Everything.cs." To compile, follow these steps:
 
