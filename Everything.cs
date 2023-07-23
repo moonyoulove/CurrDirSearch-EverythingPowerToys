@@ -71,10 +71,10 @@ namespace Community.PowerToys.Run.Plugin.Everything
 
             dynamic explorerWindow = FindExplorerWindow();
             string explorerPath = GetExplorerPath(explorerWindow);
-            bool searchInCurrentFolder = Regex.Match(query, @"^\.\\ ").Success;
+            bool searchInCurrentFolder = Regex.Match(query, @"^\./ ").Success;
             if (searchInCurrentFolder)
             {
-                query = Regex.Replace(query, @"^\.\\ ", $"parent:\"{explorerPath}\" ");
+                query = Regex.Replace(query, @"^\./ ", $"parent:\"{explorerPath}\" ");
             }
             else
             {
