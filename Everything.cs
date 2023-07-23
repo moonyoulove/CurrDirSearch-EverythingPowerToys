@@ -18,6 +18,39 @@ namespace Community.PowerToys.Run.Plugin.Everything
             Everything_SetMax(setting.Max);
         }
 
+        [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+
+        private static dynamic FindExplorerWindow()
+        {
+            IntPtr explorerWindow = FindWindow("CabinetWClass", null);
+
+            if (explorerWindow != IntPtr.Zero)
+            {
+                dynamic shellApp = Activator.CreateInstance(Type.GetTypeFromProgID("Shell.Application"));
+                dynamic shellWindows = shellApp.Windows();
+                foreach (dynamic window in shellWindows)
+                {
+                    if (window.HWND == (long)explorerWindow)
+                    {
+                        return window;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private static string GetExplorerPath(dynamic explorerWindow)
+        {
+            if (explorerWindow != null)
+            {
+                return explorerWindow.LocationURL.Replace("file:///", string.Empty).Replace('/', '\\');
+            }
+
+            return string.Empty;
+        }
+
         internal IEnumerable<Result> Query(string query, Settings setting)
         {
             string orgqry = query;
@@ -34,6 +67,18 @@ namespace Community.PowerToys.Run.Plugin.Everything
                     Everything_SetMax(0xffffffff);
                     query = nqry[1].Trim() + " ext:" + value;
                 }
+            }
+
+            dynamic explorerWindow = FindExplorerWindow();
+            string explorerPath = GetExplorerPath(explorerWindow);
+            bool searchInCurrentFolder = Regex.Match(query, @"^\./ ").Success;
+            if (searchInCurrentFolder)
+            {
+                query = Regex.Replace(query, @"^\./ ", $"parent:\"{explorerPath}\" ");
+            }
+            else
+            {
+                query = Regex.Replace(query, @"^\. ", $"\"{explorerPath}\" ");
             }
 
             _ = Everything_SetSearchW(query);
@@ -82,7 +127,22 @@ namespace Community.PowerToys.Run.Plugin.Everything
 
                         try
                         {
-                            process.Start();
+                            if (searchInCurrentFolder && explorerWindow != null)
+                            {
+                                foreach (var item in explorerWindow.Document.selectedItems())
+                                {
+                                    explorerWindow.Document.selectItem(item, 0);
+                                }
+
+                                var folderItem = explorerWindow.Document.Folder.ParseName(name);
+                                explorerWindow.Document.selectItem(folderItem, 8);
+                                explorerWindow.Document.selectItem(folderItem, 1);
+                            }
+                            else
+                            {
+                                process.Start();
+                            }
+
                             return true;
                         }
                         catch (Win32Exception)
